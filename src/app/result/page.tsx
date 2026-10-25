@@ -21,7 +21,7 @@ type SearchParams = {
 };
 
 type Props = {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 };
 
 const VALID_INSTRUMENTS: Instrument[] = ["Vo", "Gt", "Ba", "Dr", "DTM"];
@@ -38,11 +38,12 @@ function toInstrument(val: string | undefined, fallback: Instrument): Instrument
  * ステートレス方式・Cloudflare Pages (Edge Runtime) 完全対応
  */
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const title = searchParams.title || "【名もなき音楽家】";
-  const main = searchParams.main || "Gt";
-  const mainPercent = searchParams.mainPercent || "0";
-  const sub = searchParams.sub || "DTM";
-  const subPercent = searchParams.subPercent || "0";
+  const params = await searchParams;
+  const title = params.title || "【名もなき音楽家】";
+  const main = params.main || "Gt";
+  const mainPercent = params.mainPercent || "0";
+  const sub = params.sub || "DTM";
+  const subPercent = params.subPercent || "0";
 
   const siteUrl = (
     process.env.NEXT_PUBLIC_SITE_URL || "https://music-diagnosis1865.pages.dev"
@@ -87,23 +88,24 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 /**
  * シェアURL（/result?...）から訪れたユーザー向けの結果表示＆診断誘導ページ
  */
-export default function SharedResultPage({ searchParams }: Props) {
-  const mainInstrument = toInstrument(searchParams.main, "Gt");
-  const subInstrument = toInstrument(searchParams.sub, "DTM");
-  const mainPercent = Number(searchParams.mainPercent) || 40;
-  const subPercent = Number(searchParams.subPercent) || 25;
+export default async function SharedResultPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const mainInstrument = toInstrument(params.main, "Gt");
+  const subInstrument = toInstrument(params.sub, "DTM");
+  const mainPercent = Number(params.mainPercent) || 40;
+  const subPercent = Number(params.subPercent) || 25;
 
   // クエリパラメータからポイント復元（指定がない場合はmain/subから推定）
   const points: InstrumentPoints = {
-    Vo: Number(searchParams.vo) || (mainInstrument === "Vo" ? mainPercent : subInstrument === "Vo" ? subPercent : 10),
-    Gt: Number(searchParams.gt) || (mainInstrument === "Gt" ? mainPercent : subInstrument === "Gt" ? subPercent : 10),
-    Ba: Number(searchParams.ba) || (mainInstrument === "Ba" ? mainPercent : subInstrument === "Ba" ? subPercent : 10),
-    Dr: Number(searchParams.dr) || (mainInstrument === "Dr" ? mainPercent : subInstrument === "Dr" ? subPercent : 10),
-    DTM: Number(searchParams.dtm) || (mainInstrument === "DTM" ? mainPercent : subInstrument === "DTM" ? subPercent : 10),
+    Vo: Number(params.vo) || (mainInstrument === "Vo" ? mainPercent : subInstrument === "Vo" ? subPercent : 10),
+    Gt: Number(params.gt) || (mainInstrument === "Gt" ? mainPercent : subInstrument === "Gt" ? subPercent : 10),
+    Ba: Number(params.ba) || (mainInstrument === "Ba" ? mainPercent : subInstrument === "Ba" ? subPercent : 10),
+    Dr: Number(params.dr) || (mainInstrument === "Dr" ? mainPercent : subInstrument === "Dr" ? subPercent : 10),
+    DTM: Number(params.dtm) || (mainInstrument === "DTM" ? mainPercent : subInstrument === "DTM" ? subPercent : 10),
   };
 
   const calculated = calculateResult(points);
-  const displayTitle = searchParams.title || calculated.resultData.title;
+  const displayTitle = params.title || calculated.resultData.title;
   const displayDescription = calculated.resultData.description;
 
   return (
