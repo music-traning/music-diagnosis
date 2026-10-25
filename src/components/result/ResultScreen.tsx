@@ -181,11 +181,12 @@ export function ResultScreen({
 
   // X（Twitter）Web Intent シェア処理（動的OGP用クエリパラメータ付き）
   const handleShare = () => {
-    const baseUrl =
+    const rawBaseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
       (typeof window !== "undefined"
         ? window.location.origin
-        : "https://[デプロイ予定のドメイン]");
+        : "https://music-diagnosis1865.pages.dev");
+    const baseUrl = rawBaseUrl.replace(/\/$/, "");
 
     // OGP生成用のクエリパラメータを付与したURL
     const appUrl = `${baseUrl}/result?title=${encodeURIComponent(

@@ -2,10 +2,46 @@ import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
 import "./globals.css";
 
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://music-diagnosis1865.pages.dev"
+).replace(/\/$/, "");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "音楽家適性・楽器診断 | Musician EQ",
   description:
     "あなたの音楽的志向から楽器適性（Vo, Gt, Ba, Dr, DTM）と称号を精密診断！",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.jpg", type: "image/jpeg" },
+    ],
+    apple: [{ url: "/icon.jpg" }],
+  },
+  openGraph: {
+    title: "音楽家適性・楽器診断 | Musician EQ",
+    description:
+      "あなたの音楽的志向から楽器適性（Vo, Gt, Ba, Dr, DTM）と称号を精密診断！",
+    url: siteUrl,
+    siteName: "音楽家適性・楽器診断 | Musician EQ",
+    images: [
+      {
+        url: "/ogp.png",
+        width: 1200,
+        height: 630,
+        alt: "音楽家適性・楽器診断 | Musician EQ",
+      },
+    ],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "音楽家適性・楽器診断 | Musician EQ",
+    description:
+      "あなたの音楽的志向から楽器適性（Vo, Gt, Ba, Dr, DTM）と称号を精密診断！",
+    images: ["/ogp.png"],
+  },
 };
 
 export default function RootLayout({

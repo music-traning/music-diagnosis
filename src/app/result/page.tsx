@@ -44,8 +44,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const sub = searchParams.sub || "DTM";
   const subPercent = searchParams.subPercent || "0";
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL || "https://music-diagnosis1865.pages.dev"
+  ).replace(/\/$/, "");
 
   const ogParams = new URLSearchParams({
     title,
