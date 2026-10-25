@@ -98,8 +98,8 @@ export function ResultScreen({
     hasSubmittedRef.current = true;
 
     const submitToGAS = async () => {
-      const gasUrl = process.env.NEXT_PUBLIC_GAS_URL;
-      if (!gasUrl) {
+      const rawGasUrl = process.env.NEXT_PUBLIC_GAS_URL?.trim();
+      if (!rawGasUrl) {
         console.warn(
           "NEXT_PUBLIC_GAS_URL が未設定のため、デフォルト平均値を使用します。"
         );
@@ -107,6 +107,11 @@ export function ResultScreen({
         setLoading(false);
         return;
       }
+
+      // デプロイIDのみが設定されている場合でも自動で完全なGAS WebアプリURLに補完する
+      const gasUrl = rawGasUrl.startsWith("http")
+        ? rawGasUrl
+        : `https://script.google.com/macros/s/${rawGasUrl}/exec`;
 
       try {
         const response = await fetch(gasUrl, {
